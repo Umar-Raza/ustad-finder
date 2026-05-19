@@ -3,6 +3,8 @@ workflows:
     name: Android Debug Workflow
     environment:
       flutter: stable
+      groups:
+        - keys
     scripts:
       - name: Generate config.dart
         script: |
