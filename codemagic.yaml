@@ -1,6 +1,6 @@
 workflows:
-  flutter-android-workflow:
-    name: Flutter Android Workflow
+  android-debug:
+    name: Android Debug Workflow
     environment:
       flutter: stable
     scripts:
@@ -10,10 +10,7 @@ workflows:
           echo "const String geminiApiKey = '${GEMINI_KEY}';" >> lib/config.dart
       - name: Get packages
         script: flutter pub get
-      - name: Build Android APK
-        script: flutter build apk --release
-      - name: Build Android App Bundle
-        script: flutter build appbundle --release
+      - name: Build Android Debug APK
+        script: flutter build apk --debug
     artifacts:
-      - build/app/outputs/flutter-apk/**/*.apk
-      - build/app/outputs/bundle/**/*.aab
+      - build/app/outputs/flutter-apk/app-debug.apk

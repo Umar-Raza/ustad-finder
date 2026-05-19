@@ -38,10 +38,13 @@ You are an intent parser for a tutor-finding app in Pakistan. Users write in Urd
           return jsonDecode(content.trim()) as Map<String, dynamic>;
         }
       } else {
-        debugPrint('OpenAI API Error: ${response.statusCode} - ${response.body}');
+        final errorMsg = 'OpenAI API Error: ${response.statusCode} - ${response.body}';
+        debugPrint(errorMsg);
+        throw Exception(errorMsg);
       }
     } catch (e) {
       debugPrint('Exception in GeminiService (OpenAI): $e');
+      throw Exception('Exception in GeminiService (OpenAI): $e');
     }
 
     // Fallback response

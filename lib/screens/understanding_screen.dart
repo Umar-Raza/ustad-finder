@@ -18,6 +18,7 @@ class _UnderstandingScreenState extends State<UnderstandingScreen> {
 
   bool _isLoading = true;
   bool _hasError = false;
+  String? _errorMessage;
   Map<String, dynamic>? _parsedData;
   String _currentInput = "";
 
@@ -39,6 +40,7 @@ class _UnderstandingScreenState extends State<UnderstandingScreen> {
     setState(() {
       _isLoading = true;
       _hasError = false;
+      _errorMessage = null;
     });
 
     try {
@@ -47,6 +49,7 @@ class _UnderstandingScreenState extends State<UnderstandingScreen> {
       // Basic validation if fallback happened
       if (result['confidenceScore'] == 0.0 && result['subject'] == null && result['location'] == null) {
         _hasError = true;
+        _errorMessage = 'Failed to parse intent from user input.';
       }
       
       setState(() {
@@ -57,6 +60,7 @@ class _UnderstandingScreenState extends State<UnderstandingScreen> {
       setState(() {
         _isLoading = false;
         _hasError = true;
+        _errorMessage = e.toString();
       });
     }
   }
@@ -130,30 +134,39 @@ class _UnderstandingScreenState extends State<UnderstandingScreen> {
 
     if (_hasError || _parsedData == null) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
-            Card(
-              color: Theme.of(context).colorScheme.errorContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Samajhne mein Mushkil hui, dobara try karein',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onErrorContainer,
-                    fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
+              const SizedBox(height: 16),
+              if (_errorMessage != null)
+                SelectableText(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                )
+              else
+                Card(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Samajhne mein Mushkil hui, dobara try karein',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onErrorContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: _parseRequest,
+                child: const Text('Retry'),
               ),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: _parseRequest,
-              child: const Text('Retry'),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
