@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-const String openAiApiKey = String.fromEnvironment('OPENAI_KEY');
+import '../config.dart';
 
 class GeminiService {
   final String endpoint = 'https://api.openai.com/v1/chat/completions';
