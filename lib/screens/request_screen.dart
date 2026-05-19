@@ -11,6 +11,14 @@ class RequestScreen extends StatefulWidget {
 class _RequestScreenState extends State<RequestScreen> {
   final TextEditingController _controller = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      setState(() {});
+    });
+  }
+
   final List<String> _examplePrompts = [
     'G-13 mein bachay ke liye math tutor chahiye kal shaam, mehnga na ho',
     'F-11 mein O-level physics ka ustad, urgent',
@@ -100,7 +108,7 @@ class _RequestScreenState extends State<RequestScreen> {
               ),
               const Spacer(),
               FilledButton(
-                onPressed: _onFindTutor,
+                onPressed: _controller.text.trim().isEmpty ? null : _onFindTutor,
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.all(20),
                   shape: RoundedRectangleBorder(

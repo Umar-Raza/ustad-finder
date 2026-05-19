@@ -135,7 +135,19 @@ class _UnderstandingScreenState extends State<UnderstandingScreen> {
           children: [
             const Icon(Icons.error_outline, size: 48, color: Colors.red),
             const SizedBox(height: 16),
-            const Text('Oops! Kuch samajh nahi aaya. Dobara koshish karein?'),
+            Card(
+              color: Theme.of(context).colorScheme.errorContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Samajhne mein Mushkil hui, dobara try karein',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onErrorContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: _parseRequest,
