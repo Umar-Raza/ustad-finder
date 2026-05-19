@@ -6,8 +6,8 @@ workflows:
     scripts:
       - name: Generate config.dart
         script: |
-          echo "const String openAiApiKey = '\${OPENAI_KEY:-}';" > lib/config.dart
-          echo "const String geminiApiKey = '\${GEMINI_KEY:-}';" >> lib/config.dart
+          echo "const String openAiApiKey = '${OPENAI_KEY}';" > lib/config.dart
+          echo "const String geminiApiKey = '${GEMINI_KEY}';" >> lib/config.dart
       - name: Get packages
         script: flutter pub get
       - name: Build Android APK
