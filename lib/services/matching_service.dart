@@ -31,8 +31,7 @@ class MatchingService {
         subjectMatchScore = 1.0;
       }
 
-      // Filter out immediately if subjectMatch is not 1.0
-      if (subjectMatchScore < 1.0) continue;
+      bool isExact = subjectMatchScore == 1.0;
 
       // 2. Proximity (Weight: 0.15)
       double proximityScore = 0.2; // default
@@ -100,6 +99,7 @@ class MatchingService {
         tutor: tutor,
         totalScore: totalScore,
         factorBreakdown: breakdown,
+        isExactSubjectMatch: isExact,
       ));
     }
 

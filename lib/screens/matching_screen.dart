@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/tutor.dart';
 import '../models/match_result.dart';
 import '../services/data_service.dart';
 import '../services/matching_service.dart';
@@ -22,6 +21,8 @@ class _MatchingScreenState extends State<MatchingScreen> {
   bool _isLoading = true;
   List<MatchResult> _matches = [];
   int _totalTutors = 0;
+  bool _isFallback = false;
+  String _errorMessage = '';
 
   @override
   void initState() {
@@ -30,15 +31,29 @@ class _MatchingScreenState extends State<MatchingScreen> {
   }
 
   Future<void> _loadAndMatch() async {
-    final allTutors = await _dataService.loadTutors();
-    _totalTutors = allTutors.length;
-    
-    final ranked = _matchingService.rankTutors(allTutors, widget.request);
-    
-    setState(() {
-      _matches = ranked;
-      _isLoading = false;
-    });
+    try {
+      final allTutors = await _dataService.loadTutors();
+      _totalTutors = allTutors.length;
+      
+      final ranked = _matchingService.rankTutors(allTutors, widget.request);
+      final exactMatches = ranked.where((r) => r.isExactSubjectMatch).toList();
+      
+      setState(() {
+        if (exactMatches.isNotEmpty) {
+          _matches = exactMatches;
+          _isFallback = false;
+        } else {
+          _matches = ranked.take(2).toList();
+          _isFallback = true;
+        }
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   List<String> _generateReasoningSteps() {
@@ -77,7 +92,7 @@ class _MatchingScreenState extends State<MatchingScreen> {
           const SizedBox(width: 8),
           SizedBox(
             width: 45,
-            child: Text('${(weightedValue * 100).toStringAsFixed(1)}', textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            child: Text((weightedValue * 100).toStringAsFixed(1), textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -197,28 +212,42 @@ class _MatchingScreenState extends State<MatchingScreen> {
       appBar: AppBar(title: const Text('Matched Tutors')),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AgentReasoningPanel(
-                    title: 'Ranking Engine Execution:',
-                    reasoningSteps: _generateReasoningSteps(),
-                  ),
-                  const SizedBox(height: 24),
-                  if (_matches.isEmpty)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(32.0),
-                        child: Text('No tutors match the required subject.'),
+          : _errorMessage.isNotEmpty
+              ? Center(child: Text('Error: $_errorMessage'))
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AgentReasoningPanel(
+                        title: 'Ranking Engine Execution:',
+                        reasoningSteps: _generateReasoningSteps(),
                       ),
-                    )
-                  else
-                    ..._matches.asMap().entries.map((e) => _buildMatchCard(e.value, e.key + 1)),
-                ],
-              ),
-            ),
+                      const SizedBox(height: 24),
+                      if (_isFallback)
+                        Card(
+                          color: Colors.orange.shade100,
+                          child: const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Text(
+                              'Is subject ke liye abhi koi tutor available nahi — milte-julte tutors:',
+                              style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      if (_isFallback) const SizedBox(height: 16),
+                      if (_matches.isEmpty && !_isFallback)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(32.0),
+                            child: Text('No tutors match the required subject.'),
+                          ),
+                        )
+                      else
+                        ..._matches.asMap().entries.map((e) => _buildMatchCard(e.value, e.key + 1)),
+                    ],
+                  ),
+                ),
     );
   }
 }

@@ -3,8 +3,8 @@ import '../models/tutor.dart';
 import '../models/price_quote.dart';
 import '../services/pricing_service.dart';
 import '../widgets/agent_reasoning_panel.dart';
-// Note: Assuming a basic Placeholder for BookingScreen until it is implemented.
 import 'package:flutter_animate/flutter_animate.dart';
+import 'booking_screen.dart';
 
 class PricingScreen extends StatefulWidget {
   final Tutor tutor;
@@ -90,9 +90,10 @@ class _PricingScreenState extends State<PricingScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Scaffold(
-                      appBar: AppBar(title: const Text('Booking Complete')),
-                      body: const Center(child: Text('Booking Confirmed Successfully!')),
+                    builder: (context) => BookingScreen(
+                      tutor: widget.tutor,
+                      request: widget.request,
+                      finalPrice: quote.finalPrice,
                     ),
                   ),
                 );
