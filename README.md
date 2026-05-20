@@ -367,8 +367,8 @@ dev_dependencies:
 ## 📞 Contact & Support
 
 **Team:** Umar Dev  
-**Lead:** Muhammad Umar  (https://github.com/Umar-Raza)
-**Member:** Abdul Rahman Shahi  (https://github.com/abdulrahman022)
+**Lead:** Muhammad Umar 
+**Member:** Abdul Rahman Shahi  
 
 For demo, questions, or clarifications, refer to the accompanying demo video and Antigravity usage video.
 
