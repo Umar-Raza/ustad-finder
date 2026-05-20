@@ -308,7 +308,7 @@ flutter build apk --release
 
 ---
 
-## 📱 Screenshots & Demo Flow
+## Demo Flow
 
 **Screen 1:** Request input with example chips  
 **Screen 2:** Parsed intent + confidence + extracted requirements  
